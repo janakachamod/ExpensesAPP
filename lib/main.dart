@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sevenapp/screens/onboardingscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferences.getInstance();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,12 +13,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Expenses',
-      theme: ThemeData(
-        fontFamily: 'Inter',
-      ),
       home: OnboardingScreen(),
     );
   }

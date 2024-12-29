@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sevenapp/Widgets/custombutton.dart';
 import 'package:sevenapp/constants/colors.dart';
+import 'package:sevenapp/screens/mainscreen.dart';
+import 'package:sevenapp/services/userservice.dart';
 
 class UserDataScreen extends StatefulWidget {
   const UserDataScreen({super.key});
@@ -26,7 +28,6 @@ class _UserDataScreenState extends State<UserDataScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     usernamecontroller.dispose();
     emailcontroller.dispose();
     passwordcontroller.dispose();
@@ -61,6 +62,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                           if (value!.isEmpty) {
                             return 'please enter your user name';
                           }
+                          return null;
                         },
                         controller: usernamecontroller,
                         decoration: InputDecoration(
@@ -84,6 +86,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                           if (value!.isEmpty) {
                             return 'please enter your email';
                           }
+                          return null;
                         },
                         controller: emailcontroller,
                         decoration: InputDecoration(
@@ -105,8 +108,9 @@ class _UserDataScreenState extends State<UserDataScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'please enter a vlid password';
+                            return 'please enter a valid password';
                           }
+                          return null;
                         },
                         controller: passwordcontroller,
                         obscureText: true,
@@ -131,6 +135,7 @@ class _UserDataScreenState extends State<UserDataScreen> {
                           if (value!.isEmpty) {
                             return 'please enter the same password';
                           }
+                          return null;
                         },
                         controller: confirmPasswordcontroller,
                         obscureText: true,
@@ -179,13 +184,33 @@ class _UserDataScreenState extends State<UserDataScreen> {
                         height: 30,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_formKey.currentState!.validate()) {
                             String username = usernamecontroller.text;
                             String email = emailcontroller.text;
                             String password = passwordcontroller.text;
                             String confirmpassword =
                                 confirmPasswordcontroller.text;
+
+                            //save the username and email into our storage
+                            await UserServices.storeUserDetails(
+                              username: username,
+                              email: email,
+                              password: password,
+                              confirmPassword: confirmpassword,
+                              context: context,
+                            );
+
+                            if (!mounted)
+                              return; // Ensures the context is still valid
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return const MainScreen();
+                                },
+                              ),
+                            );
                           }
                         },
                         child: const CustomButton(
