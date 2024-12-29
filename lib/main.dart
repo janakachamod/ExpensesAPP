@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sevenapp/screens/onboardingscreen.dart';
+import 'package:sevenapp/Widgets/wrapper.dart';
+import 'package:sevenapp/services/userservice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -13,10 +14,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Expenses',
-      home: OnboardingScreen(),
+    return FutureBuilder(
+      future: UserServices.checkHasUserName(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          bool hasUserName = snapshot.data ?? false;
+
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Wrapper(showmainPage: hasUserName),
+          );
+        }
+      },
     );
   }
 }
